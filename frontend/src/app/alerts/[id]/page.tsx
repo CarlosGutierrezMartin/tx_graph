@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { apiGet, apiPost } from "@/lib/api";
 import Section from "@/components/Section";
 import SeverityPill from "@/components/SeverityPill";
@@ -27,8 +27,9 @@ type Timeline = {
     graph_context: GraphPayload;
 };
 
-export default function AlertDetail({ params }: { params: { id: string } }) {
-    const alertId = Number(params.id);
+export default function AlertDetail({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
+    const alertId = Number(id);
 
     const [alertData, setAlertData] = useState<AlertItem | null>(null);
     const [timeline, setTimeline] = useState<Timeline | null>(null);

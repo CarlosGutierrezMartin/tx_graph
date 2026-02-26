@@ -44,7 +44,8 @@ services:
       - neo4jdata:/data
 
   api:
-    build: ./backend
+    build:
+      context: ./backend
     environment:
       DATABASE_URL: postgresql+psycopg://graph:graph@postgres:5432/graphdb
       REDIS_URL: redis://redis:6379/0
@@ -52,6 +53,11 @@ services:
       NEO4J_USER: neo4j
       NEO4J_PASSWORD: neo4j_password
       LOG_LEVEL: INFO
+
+      # AI Copilot (Ollama local)
+      AI_ENABLED: "true"
+      OLLAMA_BASE_URL: http://ollama:11434
+      AI_MODEL: llama3.1
     ports:
       - "8000:8000"
     depends_on:
@@ -61,6 +67,8 @@ services:
         condition: service_healthy
       neo4j:
         condition: service_healthy
+      ollama:
+        condition: service_started
     command: [ "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000" ]
 
   worker:
@@ -77,6 +85,17 @@ services:
         condition: service_started
     command: [ "celery", "-A", "app.worker.celery_app", "worker", "-l", "INFO", "-Q", "default" ]
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    volumes:
+      - ollama:/root/.ollama
+
 volumes:
   pgdata:
   neo4jdata:
+  ollama:

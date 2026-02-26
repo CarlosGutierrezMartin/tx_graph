@@ -44,3 +44,6 @@ class Alert(SQLModel, table=True):
     updated_at: datetime = Field(default_factory=utcnow, index=True)
     acked_at: Optional[datetime] = Field(default=None, index=True)
     resolved_at: Optional[datetime] = Field(default=None, index=True)
+    occurrences: int = Field(default=1, index=True)
+    last_seen_at: Optional[datetime] = Field(default=None, index=True)
+    latest_canonical_event_id: Optional[int] = Field(default=None, index=True)

@@ -1,15 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from sqlmodel import Session, select
 from app.db.session import get_session
 from app.models.event_store import RawEvent
 from app.schemas.ingest import IngestEventRequest, IngestEventResponse
-from app.worker import normalize_and_upsert
+from app.services.ingestion import normalize_and_upsert
 
 router = APIRouter()
 
 
 @router.post("/ingest", response_model=IngestEventResponse)
-def ingest(req: IngestEventRequest, session: Session = Depends(get_session)):
+def ingest(
+    req: IngestEventRequest, 
+    background_tasks: BackgroundTasks,
+    session: Session = Depends(get_session)
+):
     # Idempotency: reject duplicates (or return existing id)
     existing = session.exec(
         select(RawEvent).where(RawEvent.idempotency_key == req.idempotency_key)
@@ -28,7 +32,7 @@ def ingest(req: IngestEventRequest, session: Session = Depends(get_session)):
     session.commit()
     session.refresh(raw)
 
-    # Async processing
-    normalize_and_upsert.delay(raw.id)
+    # Async processing natively via FastAPI
+    background_tasks.add_task(normalize_and_upsert, raw.id)
 
     return IngestEventResponse(raw_event_id=raw.id, status="queued")

@@ -1,4 +1,3 @@
-from celery import Celery
 from sqlmodel import Session
 
 from app.core.config import settings
@@ -8,22 +7,10 @@ from app.services.normalization import normalize_raw_payload, to_utc
 from app.services.graph import upsert_transaction
 from app.services.alert_factory import create_alert_from_event  # alerts (and linked cases)
 
-
-celery_app = Celery(
-    "tx_graph_worker",
-    broker=settings.redis_url,
-    backend=settings.redis_url,
-)
-
-celery_app.conf.task_routes = {
-    "app.worker.normalize_and_upsert": {"queue": "default"},
-}
-
-
-@celery_app.task(name="app.worker.normalize_and_upsert")
 def normalize_and_upsert(raw_event_id: int) -> dict:
     """
     Load raw event -> normalize -> write canonical row -> upsert graph -> create alert (and case for high/critical).
+    Runs as a FastAPI BackgroundTask instead of a Celery worker.
     """
     # 1) Load raw event + write canonical event (Postgres)
     with Session(engine) as session:

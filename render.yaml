@@ -3,6 +3,11 @@
 # Databases (Postgres, Redis) created via Render dashboard
 
 services:
+  # --- Redis Instance ---
+  - type: redis
+    name: tx-graph-redis
+    plan: free
+
   # --- FastAPI backend ---
   - type: web
     name: tx-graph-api
@@ -68,7 +73,3 @@ databases:
     plan: free
     databaseName: graphdb
     user: graph
-
-redis:
-  - name: tx-graph-redis
-    plan: free

@@ -69,5 +69,6 @@ databases:
     databaseName: graphdb
     user: graph
 
+redis:
   - name: tx-graph-redis
     plan: free

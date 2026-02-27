@@ -3,11 +3,6 @@
 # Databases (Postgres, Redis) created via Render dashboard
 
 services:
-  # --- Redis Instance ---
-  - type: redis
-    name: tx-graph-redis
-    plan: free
-    ipAllowList: []
 
   # --- FastAPI backend ---
   - type: web
@@ -21,11 +16,7 @@ services:
         fromDatabase:
           name: tx-graph-db
           property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: tx-graph-redis
-          property: connectionString
+
       - key: NEO4J_URI
         sync: false
       - key: NEO4J_USER
@@ -44,32 +35,7 @@ services:
         value: INFO
     plan: free
 
-  # --- Celery worker ---
-  - type: worker
-    name: tx-graph-worker
-    runtime: docker
-    dockerContext: ./backend
-    dockerfilePath: ./Dockerfile
-    dockerCommand: celery -A app.worker.celery_app worker -l INFO -Q default
-    envVars:
-      - key: DATABASE_URL
-        fromDatabase:
-          name: tx-graph-db
-          property: connectionString
-      - key: REDIS_URL
-        fromService:
-          type: redis
-          name: tx-graph-redis
-          property: connectionString
-      - key: NEO4J_URI
-        sync: false
-      - key: NEO4J_USER
-        sync: false
-      - key: NEO4J_PASSWORD
-        sync: false
-      - key: LOG_LEVEL
-        value: INFO
-    plan: free
+
 
 databases:
   - name: tx-graph-db

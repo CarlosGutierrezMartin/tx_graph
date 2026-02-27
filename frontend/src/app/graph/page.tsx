@@ -8,7 +8,7 @@ import GraphView, { GraphPayload } from "@/components/GraphView";
 export default function GraphExplorer() {
   const [kind, setKind] = useState("counterparty");
   const [key, setKey] = useState("Supplier Iberia SL");
-  const [hops, setHops] = useState(2);
+  const [hops, setHops] = useState(1);
   const [graph, setGraph] = useState<GraphPayload>({ nodes: [], edges: [] });
   const [err, setErr] = useState("");
 

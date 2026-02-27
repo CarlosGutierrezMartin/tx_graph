@@ -16,7 +16,7 @@ def _env_bool(name: str, default: bool = False) -> bool:
 
 AI_ENABLED = _env_bool("AI_ENABLED", default=False)
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://ollama:11434").rstrip("/")
-AI_MODEL = os.getenv("AI_MODEL", "llama3.1")
+AI_MODEL = os.getenv("AI_MODEL", "qwen2.5:0.5b")
 
 
 class AICopilotError(RuntimeError):

@@ -187,8 +187,11 @@ export default function AlertsPage() {
     setErr("");
     try {
       const res = await apiPost<any>(`/alerts/${id}/create-case?actor=analyst_1`);
-      showToast("success", `Case action done for alert #${id}`);
-      window.alert(`create-case:\n${JSON.stringify(res, null, 2)}`);
+      if (res.created) {
+        showToast("success", `Case #${res.case_id} created from alert #${id}`);
+      } else {
+        showToast("info", `Alert #${id} already linked to case #${res.case_id}`);
+      }
       await load();
     } catch (e: any) {
       setErr(e.message);

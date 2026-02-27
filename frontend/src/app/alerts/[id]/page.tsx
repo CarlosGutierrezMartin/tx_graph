@@ -129,8 +129,11 @@ export default function AlertDetail({ params }: { params: Promise<{ id: string }
     }
     async function createCase() {
         const res = await apiPost<any>(`/alerts/${alertId}/create-case?actor=analyst_1`);
-        showToast("success", `Case action done for alert #${alertId}`);
-        window.alert(`create-case:\n${JSON.stringify(res, null, 2)}`);
+        if (res.created) {
+            showToast("success", `Case #${res.case_id} created from alert #${alertId}`);
+        } else {
+            showToast("info", `Alert #${alertId} already linked to case #${res.case_id}`);
+        }
         await load();
     }
 

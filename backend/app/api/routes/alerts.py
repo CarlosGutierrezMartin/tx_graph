@@ -256,7 +256,7 @@ def ack_alert(
         raise HTTPException(status_code=404, detail="alert_not_found")
 
     if a.status == "resolved":
-        return {"ok": True, "status": a.status, "note": "already_resolved"}
+        raise HTTPException(status_code=409, detail="alert_already_resolved")
 
     a.status = "acked"
     a.acked_at = a.acked_at or datetime.now(timezone.utc)

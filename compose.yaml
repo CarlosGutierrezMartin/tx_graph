@@ -57,7 +57,7 @@ services:
       # AI Copilot (Ollama local)
       AI_ENABLED: "true"
       OLLAMA_BASE_URL: http://ollama:11434
-      AI_MODEL: llama3.1
+      AI_MODEL: qwen2.5:0.5b
     ports:
       - "8000:8000"
     depends_on:
@@ -94,6 +94,7 @@ services:
       - OLLAMA_HOST=0.0.0.0:11434
     volumes:
       - ollama:/root/.ollama
+    entrypoint: [ "/bin/sh", "-c", "ollama serve & sleep 3 && ollama pull qwen2.5:0.5b && wait" ]
 
 volumes:
   pgdata:

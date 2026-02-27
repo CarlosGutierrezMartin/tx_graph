@@ -4,21 +4,25 @@ import { useState } from "react";
 import { apiPostJson } from "@/lib/api";
 import Section from "@/components/Section";
 
-export default function IngestPage() {
-  const [json, setJson] = useState(
-`{
+function makeTemplate() {
+  const uid = `evt_ui_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const ts = new Date().toISOString();
+  return `{
   "source": "sandbox_transfer",
-  "idempotency_key": "evt_ui_0001",
+  "idempotency_key": "${uid}",
   "payload": {
     "event_type": "TRANSFER_OUT",
-    "occurred_at": "2026-02-24T16:00:00Z",
+    "occurred_at": "${ts}",
     "amount": 999.0,
     "currency": "EUR",
     "account_id": "acct_demo_001",
     "counterparty_name": "Supplier Iberia SL"
   }
-}`
-  );
+}`;
+}
+
+export default function IngestPage() {
+  const [json, setJson] = useState(makeTemplate);
   const [out, setOut] = useState<any>(null);
   const [err, setErr] = useState("");
 
